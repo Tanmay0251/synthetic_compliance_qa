@@ -1,0 +1,47 @@
+{
+  "gen_a_default": {
+    "content": "{\"question\": \"We refunded a customer their full payment. Do we still have to pay Razorpay their processing fee?\", \"persona\": \"backend_engineer\", \"user_context\": null, \"answer\": \"Yes. Per Part B Part I §3.4 of the Razorpay General Terms of Use, Razorpay PA fees shall always be applicable and payable by You on each Transaction irrespective of whether You have refunded the customer.\", \"clause_citations\": [{\"clause_id\": \"Part B Part I §3.4\", \"verbatim_excerpt\": \"Razorpay PA fees shall always be applicable and payable by You on each Transaction irrespective of whether You have refunded\", \"relevance\": \"direct\"}], \"confidence\": \"high\"}",
+    "input_tokens": 500,
+    "output_tokens": 120
+  },
+  "gen_b_default": {
+    "content": "{\"question\": \"A customer claims their card was used without authorization. Can Razorpay hold our settlement money?\", \"persona\": \"cto\", \"user_context\": null, \"answer\": null, \"clarifying_question\": \"What is the intimation status — has a Facility Provider already intimated Razorpay that a customer has reported an unauthorised debit? The answer on whether settlements can be withheld turns on that intimation status.\", \"clarification_axis\": \"intimation_status\", \"answer_branches\": [{\"axis_value\": \"intimated\", \"answer\": \"Yes. Once a Facility Provider has intimated Razorpay of the unauthorised debit, Razorpay PA may suspend settlements during the pendency of inquiries and investigations.\", \"clause_citations\": [{\"clause_id\": \"Part B Part I §4.1\", \"verbatim_excerpt\": \"suspend settlements to You during the pendency of inquiries, investigations and resolution\", \"relevance\": \"direct\"}]}, {\"axis_value\": \"not_intimated\", \"answer\": \"No. The Part B Part I §4.1 suspension right is triggered only after a Facility Provider intimates Razorpay that a customer has reported an unauthorised debit.\", \"clause_citations\": [{\"clause_id\": \"Part B Part I §4.1\", \"verbatim_excerpt\": \"a customer has reported an unauthorised debit\", \"relevance\": \"direct\"}]}], \"clause_citations\": [{\"clause_id\": \"Part B Part I §4.1\", \"verbatim_excerpt\": \"suspend settlements to You during the pendency of inquiries, investigations and resolution\", \"relevance\": \"direct\"}], \"confidence\": \"medium\"}",
+    "input_tokens": 700,
+    "output_tokens": 260
+  },
+  "gen_c_default": {
+    "content": "{\"question\": \"Razorpay suspended our account under Clause 16. How long can they hold our funds before releasing them?\", \"persona\": \"cto\", \"user_context\": null, \"answer\": \"The Razorpay Terms of Use do not specify a maximum duration for fund holds following a Clause 16 suspension. What is known: Part A §16.1 grants Razorpay PA the right to immediately suspend Services and settlement across a range of triggers. What is not said: any cap on how long settlements can remain held, or a release timeline. We recommend you escalate to Razorpay support in writing and engage legal counsel for any material hold.\", \"clause_citations\": [{\"clause_id\": \"Part A §16.1\", \"verbatim_excerpt\": \"Razorpay PA shall have the right to immediately suspend Services and settlement\", \"relevance\": \"supporting\"}], \"ambiguity\": {\"type\": \"silent\", \"what_is_known\": \"Part A §16.1 grants immediate suspension rights across many triggers.\", \"what_is_missing\": \"No maximum duration or release timeline for fund holds is defined anywhere in the ToS.\"}, \"confidence\": \"low\", \"should_escalate\": true}",
+    "input_tokens": 600,
+    "output_tokens": 220
+  },
+  "judge_grounding_default": {
+    "content": "{\"scores\": {\"factual_support\": 5, \"citation_relevance\": 5}, \"rationale\": \"All claims directly supported.\", \"failure_flags\": []}",
+    "input_tokens": 300,
+    "output_tokens": 60
+  },
+  "judge_category_fit_default": {
+    "content": "{\"scores\": {\"category_correctness\": 5}, \"rationale\": \"Fits A.\", \"failure_flags\": []}",
+    "input_tokens": 200,
+    "output_tokens": 40
+  },
+  "judge_clarifier_quality_default": {
+    "content": "{\"scores\": {\"specificity\": 5, \"names_axis\": 5, \"not_vague\": 5, \"explains_what_changes\": 5}, \"rationale\": \"Specific axis named.\", \"failure_flags\": []}",
+    "input_tokens": 250,
+    "output_tokens": 70
+  },
+  "judge_ambiguity_framing_default": {
+    "content": "{\"scores\": {\"names_silence_type\": 5, \"avoids_confident_answer\": 5, \"recommends_escalation\": 5}, \"rationale\": \"Properly framed as silence.\", \"failure_flags\": []}",
+    "input_tokens": 250,
+    "output_tokens": 60
+  },
+  "judge_clarity_default": {
+    "content": "{\"scores\": {\"readability\": 4, \"concision\": 4}, \"rationale\": \"Clear.\", \"failure_flags\": []}",
+    "input_tokens": 200,
+    "output_tokens": 40
+  },
+  "judge_citation_accuracy_default": {
+    "content": "{\"scores\": {\"excerpt_is_verbatim\": 5, \"clause_id_correct_scope\": 5}, \"rationale\": \"Verbatim match.\", \"failure_flags\": []}",
+    "input_tokens": 200,
+    "output_tokens": 40
+  }
+}

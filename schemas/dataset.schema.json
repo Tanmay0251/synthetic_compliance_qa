@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["id", "category", "question", "persona", "clause_citations", "confidence", "should_escalate", "generation_meta"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[ABC]-\\d{3}$"},
+    "category": {"enum": ["A", "B", "C"]},
+    "question": {"type": "string", "minLength": 10},
+    "persona": {"type": "string"},
+    "user_context": {"type": ["string", "null"]},
+    "answer": {"type": ["string", "null"]},
+    "clarifying_question": {"type": ["string", "null"]},
+    "clarification_axis": {"type": ["string", "null"]},
+    "answer_branches": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["axis_value", "answer", "clause_citations"],
+        "properties": {
+          "axis_value": {"type": "string"},
+          "answer": {"type": "string"},
+          "clause_citations": {"type": "array"}
+        }
+      }
+    },
+    "clause_citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["clause_id", "verbatim_excerpt", "relevance"],
+        "properties": {
+          "clause_id": {"type": "string"},
+          "verbatim_excerpt": {"type": "string"},
+          "relevance": {"enum": ["direct", "supporting", "contrast"]}
+        }
+      }
+    },
+    "ambiguity": {
+      "type": ["object", "null"],
+      "required": ["type", "what_is_known", "what_is_missing"],
+      "properties": {
+        "type": {"enum": ["silent", "vague_language", "external_deferral", "multi_rule_conflict"]},
+        "what_is_known": {"type": "string"},
+        "what_is_missing": {"type": "string"}
+      }
+    },
+    "confidence": {"enum": ["high", "medium", "low"]},
+    "should_escalate": {"type": "boolean"},
+    "generation_meta": {
+      "type": "object",
+      "required": ["prompt_version", "model", "timestamp", "cost_usd", "tokens", "latency_ms", "regen_count"],
+      "properties": {
+        "prompt_version": {"type": "string"},
+        "model": {"type": "string"},
+        "seed_clause_ids": {"type": "array", "items": {"type": "string"}},
+        "retrieval_trace": {"type": "array"},
+        "timestamp": {"type": "string"},
+        "cost_usd": {"type": "number"},
+        "tokens": {
+          "type": "object",
+          "required": ["input", "output"],
+          "properties": {
+            "input": {"type": "integer"},
+            "output": {"type": "integer"}
+          }
+        },
+        "latency_ms": {"type": "integer"},
+        "regen_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "validator_report": {"type": "object"},
+    "judge_report": {"type": ["object", "null"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"category": {"const": "A"}}},
+      "then": {
+        "required": ["answer"],
+        "properties": {
+          "answer": {"type": "string", "minLength": 10},
+          "clarifying_question": {"type": "null"},
+          "answer_branches": {"type": "null"},
+          "ambiguity": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"category": {"const": "B"}}},
+      "then": {
+        "required": ["clarifying_question", "clarification_axis", "answer_branches"],
+        "properties": {
+          "clarifying_question": {"type": "string", "minLength": 10},
+          "clarification_axis": {"type": "string", "minLength": 3},
+          "answer_branches": {"type": "array", "minItems": 2},
+          "ambiguity": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"category": {"const": "C"}}},
+      "then": {
+        "required": ["ambiguity"],
+        "properties": {
+          "ambiguity": {"type": "object"},
+          "should_escalate": {"const": true},
+          "clarifying_question": {"type": "null"}
+        }
+      }
+    }
+  ]
+}
