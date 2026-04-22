@@ -1,0 +1,41 @@
+{
+  "totals": {
+    "total_cost_usd": 1.720749,
+    "total_input_tokens": 110217,
+    "total_output_tokens": 23706,
+    "total_wall_seconds": 521.837,
+    "llm_calls": 41
+  },
+  "stages": [
+    {
+      "stage": "topup_gen.B",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 41618,
+      "output_tokens": 20184,
+      "cost_usd": 0.42761400000000005,
+      "latency_ms": 384081,
+      "count": 15,
+      "extra": {}
+    },
+    {
+      "stage": "topup_validate.B",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 43752,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "topup_judge",
+      "model": "claude-opus-4-7",
+      "input_tokens": 68599,
+      "output_tokens": 3522,
+      "cost_usd": 1.293135,
+      "latency_ms": 92412,
+      "count": 25,
+      "extra": {}
+    }
+  ]
+}

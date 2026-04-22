@@ -1,0 +1,91 @@
+{
+  "totals": {
+    "total_cost_usd": 9.675882,
+    "total_input_tokens": 528674,
+    "total_output_tokens": 93648,
+    "total_wall_seconds": 2607.807,
+    "llm_calls": 290
+  },
+  "stages": [
+    {
+      "stage": "gen.A.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 27627,
+      "output_tokens": 9736,
+      "cost_usd": 0.22892099999999999,
+      "latency_ms": 177334,
+      "count": 26,
+      "extra": {}
+    },
+    {
+      "stage": "gen.A.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 50974,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "gen.B.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 49342,
+      "output_tokens": 27981,
+      "cost_usd": 0.567741,
+      "latency_ms": 585238,
+      "count": 20,
+      "extra": {}
+    },
+    {
+      "stage": "gen.B.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 239097,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "gen.C.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 36880,
+      "output_tokens": 27477,
+      "cost_usd": 0.5227950000000001,
+      "latency_ms": 536675,
+      "count": 30,
+      "extra": {}
+    },
+    {
+      "stage": "gen.C.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 112551,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "judge",
+      "model": "claude-opus-4-7",
+      "input_tokens": 414825,
+      "output_tokens": 28454,
+      "cost_usd": 8.356425,
+      "latency_ms": 745380,
+      "count": 210,
+      "extra": {}
+    },
+    {
+      "stage": "judge_validation",
+      "model": "claude-opus-4-7",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 159096,
+      "count": 1,
+      "extra": {}
+    }
+  ]
+}

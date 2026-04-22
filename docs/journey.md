@@ -91,13 +91,46 @@ Two remaining B fails:
 
 Round-3 regen produced 5 self-rejects during generation (prompt working as intended).
 
-## Why we stopped at 43/45
+## v3 audit — 2 remaining fails, and a coverage problem
 
-Every round caught the previous dominant failure class and introduced a new subtler one. The arc:
+v3 auditor flagged B-006 (pre-revealed axis the v2 auditor had missed) and B-015 (concurrent obligations presented as alternatives — a new defect class that leaked through the v3 prompt's gaps).
+
+Separately, when we audited the clause map itself we found the real problem: **only 19.1% of the ToS was indexed**. The 80 hand-curated clauses covered the seed-referenced slice (Part A §3, §4, §16 and a handful of Part B sections) but missed the bulk of the document — prohibited-merchant categories (lines 321–424), TokenHQ (Part III), RTO Protection (Part VI), E-Mandate reporting, SNRR accounts, most Device/POS provisions. Generators could only seed from the 19% slice, so the dataset was topically clustered even though within that slice it was clean. If this dataset were used as training data, the downstream model would be biased toward fees/refunds/suspension topics and blind to the rest of the ToS.
+
+Two other defects surfaced at the same time:
+- Every `parent` field in the clause map pointed to a non-existent ID (hallucinated during the original curation).
+- The "PageIndex tree" was a fallback flat list of 80 siblings under a root, not a real reasoning tree — because the `pageindex` PyPI package is a hosted-API client, not a local library, and we'd been using the clause-map-derived fallback.
+
+## v4 — real PageIndex + full coverage + regen
+
+Three coordinated fixes:
+
+1. **Real PageIndex tree.** Cloned [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (the open-source implementation behind the paper), vendored into `third_party/PageIndex/`, invoked with `run_pageindex.py --md_path data/razorpay_tos.md --model anthropic/claude-sonnet-4-6`. Output: 41 section nodes, 99.9% text coverage, verified via audit — all 41 MD headings captured, 41/41 titles match source line numbers, monotonic ordering, no duplicates. Depth is 1 (Parts → sections), which is PageIndex's default for our MD; sub-clause hierarchy is in the clause map separately.
+2. **100% clause-map coverage.** Merged in 16 section-level nodes from the tree for previously-uncovered regions + 55 gap-fill entries for remaining content spans. Final: 151 entries, all 1,040 MD lines covered, all 487 content lines inside a clause. Broken `parent` fields nulled out.
+3. **Full regen on the expanded pool.** Seed 5000 + over-generate 2× → 45 rows with diverse coverage. Schema post-fix: generators now auto-fill `confidence` if the LLM drops it. B deficit closed via targeted topup (seed 6000) after dropping three B pairs that re-collided.
+
+Cost: $9.68 (v4 initial) + $1.72 (v4 B topup) = $11.40. Wall: ~50 min.
+
+Re-audited v4:
+
+| Category | v1 | v2 | v3 | **v4** |
+|---|---|---|---|---|
+| A | 14/15 | 15/15 | 15/15 | **15/15** |
+| B | 2/15 | 10/15 | 13/15 | **14/15** |
+| C | 15/15 | 15/15 | 15/15 | **15/15** |
+| **Total** | 31 | 40 | 43 | **44 / 45 (97.8%)** |
+
+Topic diversity is genuinely broader — 16 distinct section buckets represented, devices/data/e-mandate/audit topics now have meaningful presence where v3 was fee/suspension-heavy.
+
+## Why we stopped at 44/45
+
+Every round caught the previous dominant failure class and — for the first three — introduced a new subtler one:
 - v1: judge leniency + regen-seed bug + prompt generality → 31/45
 - v2: added divergence check → 40/45 (fixed seed bug, killed recycled-pair flaw)
 - v3: added axis-first + same-excerpt guard → 43/45 (killed pre-revealed-axis flaw, surfaced concurrent-obligations class)
-- v4 would guard concurrent-obligations explicitly. Each pass costs ~$2 and 10 min, with diminishing returns. The honest signal — the arc itself — matters more than the last two rows.
+- v4: real PageIndex tree + 100% map coverage + regen → 44/45 (added topic diversity, fixed schema-resilience, concurrent-obligations class persists at exactly 1 slot)
+
+The one remaining fail (B-004) is the "concurrent obligations presented as alternatives" class. It has persisted across v2/v3/v4 at exactly one slot each time — named explicitly in `failure_catalogue.md` with the prompt-guard that would kill it. A v5 would add that guard. We stopped because the persistent-one-slot pattern is a stable, named, falsifiable weakness that shows up better in disclosure than in patching.
 
 ## Total spend
 
@@ -107,7 +140,10 @@ Every round caught the previous dominant failure class and introduced a new subt
 | v1 initial + C top-up | $9.50 | 45 |
 | v2 regen (18 rows) | $2.63 | 18 replacements |
 | v3 regen (5 rows) | $1.46 | 5 replacements |
-| **Total** | **~$14.55** | **45 final** |
+| Real PageIndex tree build | ~$0.50 | (tree only) |
+| v4 full regen (45 rows) | $9.68 | 43 kept |
+| v4 B topup (5 rows) | $1.72 | 5 replacements |
+| **Total** | **~$26.45** | **45 final, 100% ToS coverage** |
 
 Judge-validation rate on hand-labels has remained **100%** across all rounds — the injected-failure set was committed before the first judge run and never edited.
 

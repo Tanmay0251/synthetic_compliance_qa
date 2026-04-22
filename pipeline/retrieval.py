@@ -69,6 +69,60 @@ class Retriever:
                     pairs.append((self._to_hit(cs[i]), self._to_hit(cs[j])))
         return pairs
 
+    def tree_sections(self) -> list[dict[str, Any]]:
+        """Top-level sections from the real PageIndex tree.
+
+        Returns a flat list of section dicts with {node_id, title, line_num, depth}
+        traversed depth-first. Lets callers navigate the ToS by title rather than
+        keyword — the "reasoning-tree retrieval" path PageIndex exists to enable.
+        """
+        out: list[dict[str, Any]] = []
+        def walk(node: dict[str, Any], depth: int = 0) -> None:
+            out.append({
+                "node_id": node.get("node_id"),
+                "title": node.get("title"),
+                "line_num": node.get("line_num"),
+                "depth": depth,
+                "has_children": bool(node.get("nodes")),
+            })
+            for c in node.get("nodes", []):
+                walk(c, depth + 1)
+        for n in self._tree.get("structure", []):
+            walk(n)
+        return out
+
+    def tree_navigate(self, title_keywords: str) -> list[dict[str, Any]]:
+        """Return tree sections whose title contains all given keywords (case-insensitive).
+
+        Example: `retriever.tree_navigate("chargeback")` returns the Chargebacks section
+        and any nested nodes. The caller then resolves the line range to the
+        corresponding clause_map entries via line-span overlap.
+        """
+        kws = [k.strip().lower() for k in title_keywords.split() if k.strip()]
+        hits: list[dict[str, Any]] = []
+        def walk(node: dict[str, Any], path: list[str]) -> None:
+            title = node.get("title", "")
+            if all(k in title.lower() for k in kws):
+                hits.append({
+                    "node_id": node.get("node_id"),
+                    "title": title,
+                    "line_num": node.get("line_num"),
+                    "path": path + [title],
+                    "text_preview": (node.get("text", "") or "")[:200],
+                })
+            for c in node.get("nodes", []):
+                walk(c, path + [title])
+        for n in self._tree.get("structure", []):
+            walk(n, [])
+        return hits
+
+    def clauses_in_line_range(self, start: int, end: int) -> list[ClauseHit]:
+        """Clause-map entries overlapping [start, end]. Bridges tree nodes back to citations."""
+        return [
+            self._to_hit(c) for c in self._all_clauses
+            if c["line_end"] >= start and c["line_start"] <= end
+        ]
+
     def silence_candidates(self) -> list[ClauseHit]:
         """Clauses that defer externally or use vague language — candidates for Category C."""
         markers = ["as per", "per rbi", "per npci", "as determined", "in accordance with",

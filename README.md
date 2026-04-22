@@ -66,14 +66,16 @@ Estimated cost for a full run (target=15/category, over-generate=1.5, models={ge
 
 ## Results
 
-45 rows, 15 per category, all schema-valid. Judge: Claude Opus 4.7 (stronger than the Sonnet 4.6 generator, deliberately).
+45 rows, 15 per category, all schema-valid. Generator: Claude Sonnet 4.6. Judge: Claude Opus 4.7 (deliberately stronger than the generator).
 
-| | Composite mean (1-5) | Independent PS audit |
+| | Composite mean (1–5) | Independent PS audit |
 |---|---|---|
-| A | 4.93 | 15 / 15 |
-| B | 4.78 | 13 / 15 |
-| C | 4.83 | 15 / 15 |
-| **Total** | | **43 / 45 (96%)** |
+| A | 4.91 | 15 / 15 |
+| B | 4.83 | 14 / 15 |
+| C | 4.67 | 15 / 15 |
+| **Total** | | **44 / 45 (97.8%)** |
+
+Source: Razorpay ToS, 1,040 MD lines. **100% of the ToS is indexed** in the clause map (151 entries). Real PageIndex reasoning tree built via VectifyAI's open-source library, 41 section nodes, 99.9% text coverage.
 
 Judge-validation on 10 committed hand-labels: **100% injected-failure catch rate** across the 5 failure types. Per-dim Cohen's κ: citation accuracy 1.00, clarifier-quality sub-dims 0.80–1.00, grounding.factual_support 0.78, ambiguity_framing.recommends_escalation **0.52** (judge over-credits soft escalation — acknowledged gap).
 
@@ -86,12 +88,12 @@ Judge-validation runs two mechanisms: (1) committed hand-labels with injected fa
 
 Full numbers: `eval_summary.md`. Per-row worst items with concrete code/rubric fixes: `failure_catalogue.md`. End-to-end build arc (v1 69% → v2 89% → v3 96%): `docs/journey.md`.
 
-## v2 (if I had another day)
+## v5 (if I had another day)
 
-- Guard Generator B against "concurrent obligations presented as alternatives" (the class that leaked through round-3).
-- Tighten `ambiguity_framing.recommends_escalation` to require a named mechanism, not just a recipient.
-- Active-learning loop: failure catalogue → prompt updates → next run, automated.
-- Real PageIndex install once it's available on Windows (currently using a clause-map-derived fallback tree).
+- **Kill the last B-class** — add a "concurrent-obligations" guard to the B prompt (if both clauses impose binding obligations that apply simultaneously with no carve-out, reject the pair). That's the one-slot defect that persists across v2/v3/v4.
+- **Tighten `ambiguity_framing.recommends_escalation`** to require a named mechanism, not just a recipient — current κ 0.52.
+- **Deeper PageIndex tree** — rerun with lower token-per-node limit so depth goes from 1 (Parts → sections) to 2 (Parts → sections → sub-clauses).
+- **Active-learning loop**: failure catalogue → prompt updates → next run, automated rather than manual per-round.
 
 ## Repo layout
 

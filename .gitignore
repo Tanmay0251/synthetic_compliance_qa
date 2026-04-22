@@ -10,6 +10,8 @@ build/
 runs/*
 !runs/.gitkeep
 !runs/2026-04-21T085610Z/
+!runs/2026-04-22-v4/
+third_party/
 .DS_Store
 .idea/
 .vscode/

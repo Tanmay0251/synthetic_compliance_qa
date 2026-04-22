@@ -90,6 +90,8 @@ def generate(
         data["answer_branches"] = None
         data["ambiguity"] = None
         data["should_escalate"] = data.get("should_escalate", False)
+        data.setdefault("confidence", "high")
+        data.setdefault("user_context", None)
         data["generation_meta"] = build_meta(
             prompt_version=PROMPT_VERSION,
             model=llm.model,
