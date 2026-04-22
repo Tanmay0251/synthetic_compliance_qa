@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+runs/*
+!runs/.gitkeep
+!runs/2026-04-21T085610Z/
+.DS_Store
+.idea/
+.vscode/
+problem_statement.txt
