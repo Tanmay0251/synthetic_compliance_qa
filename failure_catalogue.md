@@ -19,7 +19,7 @@
 **Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §1(f)']
 **Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
-### A-008 (composite 4.86)
+### A-007 (composite 4.86)
 **Q:** We're integrating Razorpay's Optimizer to route payments across multiple gateways. Our legal team wants to know: is Razorpay acting as a payment service provider for these routed transactions, or is their role something different? And who's on the hook if one of those gateways raises a dispute against us?
 **A:** For Optimizer Services, Razorpay PA's role is strictly that of a SaaS provider — not a payment service provider. The clause explicitly states that 'Razorpay PA's role will strictly be that of a SaaS provider and will not be that of a payment service provider.' On the liability question, if any payment gateway or payment aggregator raises a dispute or claim related to Optimizer Services due to your actions or omissions, you are responsible: you must 'indemnify and hold Razorpay PA, its directors, managers, officers, employees and agents harmless from and against all losses arising from claims, demands, actions or other proceedings as a result of disputes or claims raised by any payment gateway / payment aggregator in relation to Optimizer Services.'
 **Lowest dims:** `clarity.concision`=4, `grounding.factual_support`=5, `grounding.citation_relevance`=5
@@ -28,31 +28,36 @@
 
 ## Category B
 
-### B-015 (composite 4.27)
-**Q:** If I issue a refund to a customer, do I still have to pay Razorpay's fees on that transaction?
-**Clarifier:** To give you a precise answer, could you clarify which aspect of the refund_fee_obligation you are asking about — specifically, are you asking (A) whether you have the discretion to issue the refund in the first place (which depends on Escrow fund availability), or (B) whether Razorpay's processing fees remain payable on a transaction after you have already decided to refund it? The answer differs significantly: the first concerns your right to refund, while the second concerns your ongoing fee liability regardless of that refund. (axis: `refund_fee_obligation`)
-**Lowest dims:** `category_fit.category_correctness`=2, `clarity.concision`=3, `clarifier_quality.names_axis`=3
-**Flags:** axis_not_load_bearing, wrong_category
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §3.1', 'Part B Part I §3.4']
-**Mitigation proposal:** generator B over-produces borderline questions that could also be answered as Category A (the axis exists but isn't load-bearing). Code fix: tighten `pipeline/generators/b.py` `_select_pairs` to require that the two clauses in a pair disagree on a numeric/temporal dimension (not just share a topic). Rubric fix: add a `axis_is_load_bearing` gate to the validator that fails if a single clause can answer the question directly.
+### B-001 (composite 4.64)
+**Q:** We have a situation where funds need to be refunded — can Razorpay handle the refund, or is that entirely on us?
+**Clarifier:** Can you clarify the refund scenario type? Is this a customer requesting a refund for a product or service your business sold (in which case Razorpay has no responsibility and the obligation falls entirely on you), or is this Razorpay determining it cannot settle funds held in escrow — for example due to a regulatory mandate — and returning them to the source account (in which case Razorpay has the right to act unilaterally after giving you prior notice)? (axis: `refund_scenario_type`)
+**Lowest dims:** `clarity.concision`=2, `clarity.readability`=4, `grounding.factual_support`=5
+**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §2.9', 'Part B Part I §1(h)']
+**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
-### B-013 (composite 4.36)
-**Q:** If a payment is refunded back to the customer, do I still owe Razorpay any fees on that transaction?
-**Clarifier:** To give you an accurate answer, I need to know the refund_initiating_party — specifically, was the refund initiated by **you (the merchant)** voluntarily returning funds to your customer, or was it initiated by **Razorpay PA** acting on its own discretion or under a regulatory mandate and refunding the amount back to the source account? The answer changes significantly depending on who triggered the refund: if you initiated the refund, fee obligations under the fee clause apply; if Razorpay PA initiated the refund due to an internal decision or regulatory mandate, the basis and context of the refund is governed by a different clause and the fee obligation may be disputed. (axis: `refund_initiating_party`)
-**Lowest dims:** `category_fit.category_correctness`=3, `clarity.concision`=3, `grounding.factual_support`=4
-**Flags:** borderline
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §1(h)', 'Part B Part I §3.4']
-**Mitigation proposal:** generator B over-produces borderline questions that could also be answered as Category A (the axis exists but isn't load-bearing). Code fix: tighten `pipeline/generators/b.py` `_select_pairs` to require that the two clauses in a pair disagree on a numeric/temporal dimension (not just share a topic). Rubric fix: add a `axis_is_load_bearing` gate to the validator that fails if a single clause can answer the question directly.
+### B-002 (composite 4.64)
+**Q:** We have an outstanding balance owed to Razorpay under a separate lending product agreement with one of their Group Entities. Can Razorpay set off that amount against our payment settlements under the current PA services agreement?
+**Clarifier:** Is the liability in question arising under the current PA Services agreement (e.g., chargebacks or fees under these Terms), or does it arise under a separate agreement with Razorpay PA or a Group Entity? If it's under the current Services agreement, Part B §1(f) directly governs the set-off from Transaction Amounts or held funds; if it's under a separate agreement with Razorpay PA or a Group Entity, the broader set-off right in Part A §14.2 would be the operative clause, and the exposure is wider. (axis: `liability_source_agreement`)
+**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `citation_accuracy.excerpt_is_verbatim`=4
+**Flags:** paraphrase_not_verbatim
+**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §14.2', 'Part B Part I §1(f)']
+**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
-### B-002 (composite 4.45)
-**Q:** If Razorpay PA causes a loss related to payment processing, how are fees calculated for determining my compensation or liability cap?
-**Clarifier:** To give you an accurate answer, I need to know your fee_payment_method: are you paying fees through purchased Fee Credits (where fees are deducted from a pre-loaded credit balance), or are fees deducted directly from each Transaction Amount? This matters because the basis for calculating 'one month fees paid by You' — which sets the liability cap — could differ depending on whether your fees are tracked as deductions from Fee Credits or from transaction settlements. (axis: `fee_payment_method`)
-**Lowest dims:** `clarity.concision`=3, `citation_accuracy.excerpt_is_verbatim`=3, `category_fit.category_correctness`=4
-**Flags:** non_contiguous_excerpt, paraphrase_not_verbatim
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §7.2', 'Part B Part I §1(e)']
+### B-003 (composite 4.73)
+**Q:** We just got flagged by Razorpay and they're threatening to suspend our payment services over a KYC issue. What's the worst-case outcome here and can we recover from it?
+**Clarifier:** Is the KYC issue about information you already submitted being found inaccurate or incomplete, or is it about Razorpay requesting additional KYC documents that you haven't submitted yet? If it's the former (inaccurate existing info), Razorpay can immediately suspend and also terminate your account entirely; if it's the latter (non-submission of newly requested docs), suspension and settlement stoppage apply but the relationship can be restored once you submit the documents to their satisfaction. (axis: `kyc_issue_type`)
+**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `grounding.factual_support`=5
+**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §2.2', 'Part A §2.8']
 **Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
 ## Category C
+
+### C-014 (composite 4.6)
+**Q:** We updated our GST registration number after Razorpay had already generated invoices for that billing period with the old GSTIN. Is Razorpay contractually obligated to issue amended invoices or credit notes, and will they refile the GST returns to correct the earlier ones?
+**A:** Part A §3.7 places the obligation to update the GST number squarely on the merchant *before* invoice generation, and states Razorpay will file returns 'as per the statutory timelines' based on the information you provide — but the clause is entirely silent on what happens after an invoice has already been raised with incorrect or outdated GSTIN details. The ToS does not define whether Razorpay will issue a credit note, raise a revised invoice, or file an amended GSTR-1, all of which are procedures governed externally by CGST Act §34 and GST amendment return rules rather than by this agreement. The clause's only post-error mechanism is Razorpay's right to recover liabilities from you — it creates no corresponding affirmative obligation on Razorpay to remediate already-filed returns. Given this gap, you should raise a formal dashboard support ticket with Razorpay's GST/finance team requesting a written confirmation of their amendment and credit-note policy, and simultaneously engage external GST counsel to assess your own rectification obligations under CGST rules so you are not exposed to input tax credit denial on your buyers' end.
+**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `ambiguity_framing.names_silence_type`=4
+**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §3.7']
+**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
 ### C-008 (composite 4.7)
 **Q:** If a fraudulent transaction is discovered after the settlement amount has already been paid out to my account, how exactly will the dispute be resolved — and what does that mean for how much money I might have to return, and within what timeframe?
@@ -74,42 +79,9 @@ Do not assume the matter is resolved in your favour or against you until you hav
 **Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §4.2']
 **Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
-### C-011 (composite 4.7)
-**Q:** If a fraudulent transaction on my Razorpay integration results in a chargeback, exactly which rules and timelines apply — and does RBI's chargeback framework or NPCI's dispute resolution mechanism take precedence over what Razorpay's Terms say?
-**A:** This is a genuinely ambiguous area where Razorpay's Terms of Service provide only a partial answer, and the full picture requires looking beyond the document itself.
-
-**What the ToS does say:** Part B Part I §4.3 states that 'if the Fraudulent Transaction results in a Chargeback, then such Chargeback shall be resolved in accordance with the provisions set out in the Terms.' This confirms that a chargeback pathway exists for fraudulent transactions and that the Terms govern it — but only to the extent that the Terms themselves define the process.
-
-**What the ToS does not say:** The clause does not specify: (a) which external regulatory framework — RBI's chargeback circulars, NPCI's dispute resolution rules for UPI/RuPay, card network rules (Visa/Mastercard), or applicable state/central law — controls in the event of a conflict or gap; (b) the precise timelines a merchant must follow to raise or respond to a chargeback; (c) how liability is allocated between Razorpay, the acquiring bank, and the merchant when fraud is alleged but not yet proven; and (d) whether RBI's Zero Liability / Limited Liability framework for unauthorised transactions overrides any contractual term in the ToS.
-
-The clause effectively defers resolution to 'the Terms,' but the Terms themselves appear to defer — at least implicitly — to external regulation without drawing clear boundaries between what the contract controls and what RBI/NPCI mandates control. This creates a regulatory gap that the document alone cannot resolve.
-
-**Recommended escalation path:**
-1. **Razorpay Merchant Support** — Request a written clarification of the specific chargeback procedure, timelines, and liability allocation applicable to your payment method (card, UPI, netbanking).
-2. **Legal Counsel** — Engage a payments-law specialist to assess how RBI's Master Direction on Prepaid Payment Instruments, the RBI circular on customer protection in unauthorised electronic transactions (DBR.No.Leg.BC.78/09.07.005/2017-18), and relevant NPCI operating guidelines interact with your merchant agreement.
-3. **RBI / NPCI Guidance** — If the dispute involves a systemic or regulatory question, the RBI Ombudsman for Digital Transactions or NPCI's dispute portal may provide authoritative direction.
-
-No confident resolution can be offered here without knowing your specific payment instrument, the applicable card/network scheme rules, and how Razorpay's internal chargeback policy operationalises §4.3.
-**Lowest dims:** `grounding.factual_support`=4, `grounding.citation_relevance`=4, `clarity.concision`=4
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §4.3']
-**Mitigation proposal:** a numeric or temporal claim in the answer isn't backed by any cited clause. The deterministic grounding check only matches literal day/percentage patterns; this is a miss where the model paraphrased the number into different units. Code fix: extend `_check_grounding` in `pipeline/validator.py` to normalise numeric units before matching.
-
-### C-004 (composite 4.8)
-**Q:** If a fraudulent transaction on my Razorpay integration results in a chargeback, exactly which rules govern the resolution process — and what happens if RBI or NPCI guidelines conflict with what Razorpay's Terms say?
-**A:** This is a genuinely ambiguous area where Razorpay's Terms of Service provide only a partial answer, and the full picture requires consulting external sources.
-
-**What the ToS does say:** Part B Part I §4.3 states that if a fraudulent transaction results in a chargeback, 'such Chargeback shall be resolved in accordance with the provisions set out in the Terms.' This tells you that a chargeback process exists and that Razorpay's own Terms are the stated reference point for resolution.
-
-**What the ToS does not say:** The clause does not define which specific provisions within 'the Terms' govern chargeback timelines, merchant liability caps, evidence submission windows, or dispute escalation procedures. More critically, the Terms do not explicitly delineate how — or whether — RBI's chargeback and dispute resolution guidelines (such as those under the Payment and Settlement Systems Act, 2007, or RBI's Master Directions on Prepaid Payment Instruments) or NPCI's network-level chargeback rules (which vary by instrument: UPI, RuPay, IMPS, etc.) interact with or override Razorpay's internal provisions. There is no stated hierarchy of authority when a conflict arises between Razorpay's Terms and these external regulatory frameworks.
-
-**Why this matters practically:** RBI and NPCI each publish their own chargeback timelines and liability rules, which card networks (Visa, Mastercard) also layer on top of. If Razorpay's Terms set a shorter dispute window than RBI mandates, or if NPCI rules assign liability differently than Razorpay's Terms suggest, a merchant could unknowingly waive rights or face unexpected financial exposure.
-
-**Recommended escalation path:**
-1. **Razorpay Merchant Support** — Request a written clarification on which specific clauses govern chargeback resolution for your payment instruments, and ask how external regulatory rules are incorporated.
-2. **Legal counsel** familiar with Indian payment regulations — To assess whether RBI's Master Directions or NPCI operating circulars create enforceable rights that supersede any contractual terms.
-3. **RBI / NPCI directly** — RBI's consumer grievance portal and NPCI's published operating guidelines can clarify the regulatory floor for chargeback rights that no private contract can contractually waive.
-
-Given the external deferral without defined boundaries, no confident resolution can be offered here without those additional clarifications.
-**Lowest dims:** `grounding.factual_support`=4, `clarity.concision`=4, `grounding.citation_relevance`=5
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part B Part I §4.3']
-**Mitigation proposal:** a numeric or temporal claim in the answer isn't backed by any cited clause. The deterministic grounding check only matches literal day/percentage patterns; this is a miss where the model paraphrased the number into different units. Code fix: extend `_check_grounding` in `pipeline/validator.py` to normalise numeric units before matching.
+### C-012 (composite 4.7)
+**Q:** Our escrow credit from the acquiring bank sometimes arrives at Razorpay in two partial batches for a single settlement cycle — does the 5-day domestic settlement clock start from the first partial credit or only once the full Transaction Amount is received in the Escrow Account?
+**A:** The clause states that the 5-day domestic settlement timeline runs 'from the date of receipt of Transaction Amount in the Escrow Account,' and that settlement is 'subject to credit to / receipt of funds by Razorpay PA in the Escrow Account from our Facility Providers.' This anchors the clock to Escrow Account receipt, but the ToS does not define what constitutes 'receipt' when funds arrive in multiple partial tranches for a single transaction or batch — specifically, whether the clock starts on first partial credit or only upon full receipt. The Payment Aggregator Guidelines issued by RBI are referenced as the governing standard for these timelines, but the ToS does not reproduce or summarise those rules, leaving the partial-credit scenario unresolved from the document alone. To get a binding interpretation, raise a formal written support ticket via the Razorpay Dashboard (Disputes & Settlement section) requesting clarification on partial-credit escrow receipt treatment, and separately have legal counsel review the RBI Payment Aggregator Guidelines (RBI/2020-21/254 DPSS.CO.PD No.1810/02.14.008/2020-21 and any subsequent circulars) to confirm whether those regulations specify a trigger event for the settlement clock in partial-funding scenarios.
+**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `grounding.factual_support`=5
+**Root-cause trace:** validator=True; regen_count=1; seed_clauses=['Part B Part I §1.1']
+**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.

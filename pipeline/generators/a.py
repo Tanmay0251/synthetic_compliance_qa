@@ -9,19 +9,27 @@ from pipeline.llm import LLMClient, Msg
 from pipeline.retrieval import ClauseHit, Retriever
 
 
-PROMPT_VERSION = "gen-a-v1"
+PROMPT_VERSION = "gen-a-v2"
 TEMPLATE_NAME = "gen_a_v1.md"
 
 
-def _select_anchors(retriever: Retriever, n: int, rng: random.Random) -> list[ClauseHit]:
+def _select_anchors(
+    retriever: Retriever,
+    n: int,
+    rng: random.Random,
+    exclude_clause_ids: set[str] | None = None,
+) -> list[ClauseHit]:
     """Prefer clauses with concrete numbers / day-counts / percentages (A-friendly)."""
     import re as _re
+    exclude = set(exclude_clause_ids or [])
     candidates = []
     for h in retriever.all_clauses():
+        if h.clause_id in exclude:
+            continue
         if _re.search(r"\b\d+\s*(days?|%|percent|hours?|working\s+days?)\b", h.text, _re.IGNORECASE):
             candidates.append(h)
     if len(candidates) < n:
-        extras = [h for h in retriever.all_clauses() if h not in candidates]
+        extras = [h for h in retriever.all_clauses() if h.clause_id not in exclude and h not in candidates]
         rng.shuffle(extras)
         candidates.extend(extras)
     rng.shuffle(candidates)
@@ -36,10 +44,13 @@ def generate(
     seed: int,
     regen_feedback: str = "",
     anchor_override: list[ClauseHit] | None = None,
+    exclude_clause_ids: set[str] | None = None,
 ) -> list[Candidate]:
     rng = random.Random(seed)
     template = load_prompt(TEMPLATE_NAME)
-    anchors = anchor_override if anchor_override is not None else _select_anchors(retriever, n, rng)
+    anchors = anchor_override if anchor_override is not None else _select_anchors(
+        retriever, n, rng, exclude_clause_ids=exclude_clause_ids
+    )
     out: list[Candidate] = []
     for i, anchor in enumerate(anchors):
         prompt = render(
@@ -68,6 +79,9 @@ def generate(
         except (ValueError, Exception) as e:
             p = dump_raw("gen_a", i, resp.content, str(e))
             print(f"[gen A] candidate {i} JSON parse failed, skipped (raw dumped to {p.name})")
+            continue
+        if data.get("reject"):
+            print(f"[gen A] candidate {i} self-rejected: {data.get('reason', '')[:120]}")
             continue
         data["id"] = f"A-{len(out)+1:03d}"
         data["category"] = "A"

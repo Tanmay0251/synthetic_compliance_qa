@@ -7,7 +7,7 @@ from pipeline.generators.common import Candidate, build_meta, dump_raw, extract_
 from pipeline.llm import LLMClient, Msg
 from pipeline.retrieval import ClauseHit, Retriever
 
-PROMPT_VERSION = "gen-c-v1"
+PROMPT_VERSION = "gen-c-v2"
 TEMPLATE_NAME = "gen_c_v1.md"
 
 SILENCE_HINTS = {
@@ -18,11 +18,20 @@ SILENCE_HINTS = {
 }
 
 
-def _select_candidates(retriever: Retriever, n: int, rng: random.Random) -> list[tuple[ClauseHit, str]]:
+def _select_candidates(
+    retriever: Retriever,
+    n: int,
+    rng: random.Random,
+    exclude_clause_ids: set[str] | None = None,
+) -> list[tuple[ClauseHit, str]]:
+    exclude = set(exclude_clause_ids or [])
     silent_cands = retriever.silence_candidates()
     rng.shuffle(silent_cands)
     out: list[tuple[ClauseHit, str]] = []
+    seen_here: set[str] = set()
     for h in silent_cands:
+        if h.clause_id in exclude or h.clause_id in seen_here:
+            continue
         t_lower = h.text.lower()
         if any(m in t_lower for m in ["per rbi", "per npci", "as per", "in accordance with"]):
             hint = SILENCE_HINTS["external_deferral"]
@@ -33,11 +42,17 @@ def _select_candidates(retriever: Retriever, n: int, rng: random.Random) -> list
         else:
             hint = SILENCE_HINTS["silent"]
         out.append((h, hint))
+        seen_here.add(h.clause_id)
         if len(out) >= n:
             break
-    while len(out) < n:
-        h = rng.choice(retriever.all_clauses())
+    # If we still need more, fill with random non-excluded clauses
+    fallback = [c for c in retriever.all_clauses() if c.clause_id not in exclude and c.clause_id not in seen_here]
+    rng.shuffle(fallback)
+    for h in fallback:
+        if len(out) >= n:
+            break
         out.append((h, SILENCE_HINTS["silent"]))
+        seen_here.add(h.clause_id)
     return out
 
 
@@ -48,10 +63,11 @@ def generate(
     llm: LLMClient,
     seed: int,
     regen_feedback: str = "",
+    exclude_clause_ids: set[str] | None = None,
 ) -> list[Candidate]:
     rng = random.Random(seed + 2)
     template = load_prompt(TEMPLATE_NAME)
-    cands = _select_candidates(retriever, n, rng)
+    cands = _select_candidates(retriever, n, rng, exclude_clause_ids=exclude_clause_ids)
     out: list[Candidate] = []
     for i, (h, hint) in enumerate(cands):
         prompt = render(
@@ -81,6 +97,9 @@ def generate(
         except (ValueError, Exception) as e:
             p = dump_raw("gen_c", i, resp.content, str(e))
             print(f"[gen C] candidate {i} JSON parse failed, skipped (raw dumped to {p.name})")
+            continue
+        if data.get("reject"):
+            print(f"[gen C] candidate {i} self-rejected: {data.get('reason', '')[:120]}")
             continue
         data["id"] = f"C-{len(out)+1:03d}"
         data["category"] = "C"
