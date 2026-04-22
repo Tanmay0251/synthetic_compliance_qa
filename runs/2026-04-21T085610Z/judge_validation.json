@@ -1,0 +1,350 @@
+{
+  "report": {
+    "per_dimension": {
+      "grounding.factual_support": {
+        "exact_match": 0.9,
+        "within_1": 0.9,
+        "quadratic_kappa": 0.78,
+        "n": 10
+      },
+      "grounding.citation_relevance": {
+        "exact_match": 0.6,
+        "within_1": 1.0,
+        "quadratic_kappa": 0.826,
+        "n": 10
+      },
+      "clarity.readability": {
+        "exact_match": 0.7,
+        "within_1": 1.0,
+        "quadratic_kappa": 0.4,
+        "n": 10
+      },
+      "clarity.concision": {
+        "exact_match": 0.9,
+        "within_1": 1.0,
+        "quadratic_kappa": 0.783,
+        "n": 10
+      },
+      "citation_accuracy.excerpt_is_verbatim": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 10
+      },
+      "citation_accuracy.clause_id_correct_scope": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 10
+      },
+      "clarifier_quality.specificity": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 3
+      },
+      "clarifier_quality.names_axis": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 3
+      },
+      "clarifier_quality.not_vague": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 3
+      },
+      "clarifier_quality.explains_what_changes": {
+        "exact_match": 0.667,
+        "within_1": 1.0,
+        "quadratic_kappa": 0.8,
+        "n": 3
+      },
+      "ambiguity_framing.names_silence_type": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 0.0,
+        "n": 3
+      },
+      "ambiguity_framing.avoids_confident_answer": {
+        "exact_match": 1.0,
+        "within_1": 1.0,
+        "quadratic_kappa": 1.0,
+        "n": 3
+      },
+      "ambiguity_framing.recommends_escalation": {
+        "exact_match": 0.333,
+        "within_1": 0.667,
+        "quadratic_kappa": 0.516,
+        "n": 3
+      }
+    },
+    "injected_failure_catch_rate": 1.0,
+    "n_items": 10
+  },
+  "per_row": [
+    {
+      "row_id": "A-001",
+      "injected_failure": null,
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "A-002",
+      "injected_failure": null,
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "B-001",
+      "injected_failure": null,
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "clarifier_quality.specificity": 5,
+        "clarifier_quality.names_axis": 5,
+        "clarifier_quality.not_vague": 5,
+        "clarifier_quality.explains_what_changes": 5
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "clarifier_quality.specificity": 5,
+        "clarifier_quality.names_axis": 5,
+        "clarifier_quality.not_vague": 5,
+        "clarifier_quality.explains_what_changes": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "B-002",
+      "injected_failure": null,
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "clarifier_quality.specificity": 5,
+        "clarifier_quality.names_axis": 5,
+        "clarifier_quality.not_vague": 5,
+        "clarifier_quality.explains_what_changes": 5
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "clarifier_quality.specificity": 5,
+        "clarifier_quality.names_axis": 5,
+        "clarifier_quality.not_vague": 5,
+        "clarifier_quality.explains_what_changes": 4,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "C-001",
+      "injected_failure": null,
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 5,
+        "ambiguity_framing.recommends_escalation": 4
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 4,
+        "category_correctness": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 5,
+        "ambiguity_framing.recommends_escalation": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "A-003",
+      "injected_failure": "wrong_citation",
+      "judge": {
+        "grounding.factual_support": 1,
+        "grounding.citation_relevance": 1,
+        "category_fit.category_correctness": 2,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 1
+      },
+      "human": {
+        "grounding.factual_support": 4,
+        "grounding.citation_relevance": 2,
+        "category_correctness": 4,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 1
+      }
+    },
+    {
+      "row_id": "A-004",
+      "injected_failure": "paraphrase_not_verbatim",
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 1,
+        "citation_accuracy.clause_id_correct_scope": 5
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 1,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "B-003",
+      "injected_failure": "vague_clarifier",
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 4,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "clarifier_quality.specificity": 1,
+        "clarifier_quality.names_axis": 2,
+        "clarifier_quality.not_vague": 1,
+        "clarifier_quality.explains_what_changes": 3
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 4,
+        "clarifier_quality.specificity": 1,
+        "clarifier_quality.names_axis": 2,
+        "clarifier_quality.not_vague": 1,
+        "clarifier_quality.explains_what_changes": 3,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "C-002",
+      "injected_failure": "confident_in_C",
+      "judge": {
+        "grounding.factual_support": 1,
+        "grounding.citation_relevance": 4,
+        "category_fit.category_correctness": 1,
+        "clarity.readability": 4,
+        "clarity.concision": 4,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 1,
+        "ambiguity_framing.recommends_escalation": 2
+      },
+      "human": {
+        "grounding.factual_support": 1,
+        "grounding.citation_relevance": 5,
+        "category_correctness": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 1,
+        "ambiguity_framing.recommends_escalation": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    },
+    {
+      "row_id": "C-003",
+      "injected_failure": "no_escalation_in_C",
+      "judge": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 5,
+        "category_fit.category_correctness": 5,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 5,
+        "ambiguity_framing.recommends_escalation": 1
+      },
+      "human": {
+        "grounding.factual_support": 5,
+        "grounding.citation_relevance": 4,
+        "category_correctness": 5,
+        "ambiguity_framing.names_silence_type": 5,
+        "ambiguity_framing.avoids_confident_answer": 5,
+        "ambiguity_framing.recommends_escalation": 1,
+        "clarity.readability": 5,
+        "clarity.concision": 5,
+        "citation_accuracy.excerpt_is_verbatim": 5,
+        "citation_accuracy.clause_id_correct_scope": 5
+      }
+    }
+  ]
+}

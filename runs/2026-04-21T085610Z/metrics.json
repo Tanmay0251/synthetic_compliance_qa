@@ -1,0 +1,91 @@
+{
+  "totals": {
+    "total_cost_usd": 7.811901,
+    "total_input_tokens": 379336,
+    "total_output_tokens": 81439,
+    "total_wall_seconds": 2312.35,
+    "llm_calls": 251
+  },
+  "stages": [
+    {
+      "stage": "gen.A.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 13061,
+      "output_tokens": 8021,
+      "cost_usd": 0.159498,
+      "latency_ms": 138165,
+      "count": 23,
+      "extra": {}
+    },
+    {
+      "stage": "gen.A.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 5129,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "gen.B.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 17934,
+      "output_tokens": 25527,
+      "cost_usd": 0.436707,
+      "latency_ms": 351551,
+      "count": 23,
+      "extra": {}
+    },
+    {
+      "stage": "gen.B.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 183841,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "gen.C.generate",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 13767,
+      "output_tokens": 23934,
+      "cost_usd": 0.400311,
+      "latency_ms": 511869,
+      "count": 21,
+      "extra": {}
+    },
+    {
+      "stage": "gen.C.validate_regen",
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 275660,
+      "count": 1,
+      "extra": {}
+    },
+    {
+      "stage": "judge",
+      "model": "claude-opus-4-7",
+      "input_tokens": 334574,
+      "output_tokens": 23957,
+      "cost_usd": 6.815385,
+      "latency_ms": 682729,
+      "count": 180,
+      "extra": {}
+    },
+    {
+      "stage": "judge_validation",
+      "model": "claude-opus-4-7",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 162027,
+      "count": 1,
+      "extra": {}
+    }
+  ]
+}
