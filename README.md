@@ -64,52 +64,34 @@ Estimated cost for a full run (target=15/category, over-generate=1.5, models={ge
 
 > Latest dry-run cost log: `runs/dry/metrics.json` — stage-by-stage tokens and cost. Real-run costs will be logged under `runs/<ts>/metrics.json`. The top of `report.md` surfaces totals.
 
-## What the LLM-as-judge evaluation reveals
+## Results
 
-_Filled in by the latest real run. See `runs/2026-04-21T085610Z/report.md` for the source of truth._
+45 rows, 15 per category, all schema-valid. Judge: Claude Opus 4.7 (stronger than the Sonnet 4.6 generator, deliberately).
 
-**Run summary** (2026-04-21):
-- 45 rows, exactly 15 per category (A/B/C)
-- Generator: `claude-sonnet-4-6`; Judge: `claude-opus-4-7` (the stronger model, intentionally)
-- Wall time: ~47 min (2312s initial + 494s C top-up); **Total cost: $9.50** for 297 LLM calls
-- Composite means: **A = 4.94 / B = 4.64 / C = 4.86** (out of 5)
-- **Judge-validation on hand-labels: 100% injected-failure catch rate** — all 5 injected failures (wrong citation, paraphrased excerpt, vague clarifier, confident answer in C, missing escalation) scored ≤2 on the right dimension by the blind judge.
-- Per-dimension quadratic κ: citation accuracy (1.00), clarifier quality sub-dims (0.80–1.00), grounding.factual_support (0.78), clarity.readability (0.40 — acknowledged gap).
+| | Composite mean (1-5) | Independent PS audit |
+|---|---|---|
+| A | 4.93 | 15 / 15 |
+| B | 4.78 | 13 / 15 |
+| C | 4.83 | 15 / 15 |
+| **Total** | | **43 / 45 (96%)** |
 
-**What the numbers reveal, honestly:**
-- **Category B scores lowest** (4.64 vs 4.94/4.86), which is correct: the clarifying-question task is the hardest to do well, and B-019 / B-015 both got dinged for category-fit borderline scores (the axis they named could arguably resolve to a clear answer directly).
-- **Category C scored ABOVE B** (4.86 vs 4.64). Your own feedback flagged this as a classic failure mode — "judge rubber-stamps 'I don't know' as a clear answer." Here the dedicated `AmbiguityFramingJudge` kept confident-phrasing in check (avoids_confident_answer: exact 1.00, κ 1.00), and C scoring high reflects genuine ambiguity-framing quality rather than judge leniency. That said, `ambiguity_framing.recommends_escalation` only agreed with hand-labels at 0.33 exact-match — judges over-credit soft escalation language. Flagged for v2.
-- **Category A is at the ceiling** (4.94): every A row cited a real clause with a verbatim excerpt, and factual_support held up under Opus-4.7 scrutiny. The validator's deterministic gates (citation-resolves, grounding, structural rules) already eliminated 8/23 candidates before any judge saw them — the judge is scoring what the validator already filtered.
+Judge-validation on 10 committed hand-labels: **100% injected-failure catch rate** across the 5 failure types. Per-dim Cohen's κ: citation accuracy 1.00, clarifier-quality sub-dims 0.80–1.00, grounding.factual_support 0.78, ambiguity_framing.recommends_escalation **0.52** (judge over-credits soft escalation — acknowledged gap).
 
-**Cost efficiency:** $0.21/row against Opus-4.7 judges is within reach of running this at 10× scale if needed.
+Six micro-judges rather than one monolithic rubric:
+- `GroundingJudge`, `CategoryFitJudge`, `ClarityJudge`, `CitationAccuracyJudge` — all categories
+- `ClarifierQualityJudge` (4 sub-dims) — B only
+- `AmbiguityFramingJudge` — C only, specifically to block judge-rubber-stamps-on-"I don't know"
 
-**v1 drops flagged in `dropped.jsonl`:** primarily duplicate-question detections from the pigeon-holed seed-clause pool (A: 8 drops, B: 8 drops, C: 14 drops + 4 JSON-parse failures). JSON-parse failures exclusively affected long-form Category C answers that contained unescaped quotes inside clause verbatim excerpts; handled by the `json_repair` fallback after the initial crash. See `runs/_raw_dumps/` for post-mortem artifacts.
+Judge-validation runs two mechanisms: (1) committed hand-labels with injected failures (`eval/hand_labels.jsonl`); (2) cross-model κ via `--cross-model-judge gpt-5` (code ready, gated on OPENAI_API_KEY).
 
-We split the judge into **six per-dimension micro-judges**, not one monolithic rubric:
-- `GroundingJudge` (factual_support, citation_relevance) — all categories
-- `CategoryFitJudge` (category_correctness) — all categories
-- `ClarifierQualityJudge` (specificity, names_axis, not_vague, explains_what_changes) — B only
-- `AmbiguityFramingJudge` (names_silence_type, avoids_confident_answer, recommends_escalation) — C only, specifically to catch the "judge rubber-stamps 'I don't know' as clear" failure mode
-- `ClarityJudge` (readability, concision) — all
-- `CitationAccuracyJudge` (excerpt_is_verbatim, clause_id_correct_scope) — A, B
-
-**Judge-validation** runs two mechanisms:
-1. **Hand-labels**: `eval/hand_labels.jsonl` contains 10 committed items — 5 plausibly-good, 5 with injected known failures (wrong citation, paraphrased excerpt, vague clarifier, confident answer in C, missing escalation). The judge scores them blind; we report per-dimension exact-match / within-1 / quadratic-κ and the injected-failure catch rate.
-2. **Cross-model κ** (optional, when `--cross-model-judge <openai_model>` is set): a GPT-family model runs the same rubric on a 20% random slice; per-dimension Cohen's κ reported in `cross_model_kappa.json`; disagreements dumped to `judge_disagreements.jsonl` for manual review.
-
-## Self-identified failures
-
-`runs/<ts>/failure_catalogue.md` is automatically generated: 3 lowest-scoring items per category, lowest scoring dimensions, raised flags, regen count, and seed clauses. It is not cherry-picked.
-
-> The committed `eval/hand_labels.jsonl` contains 10 deliberately-constructed items — 5 plausibly-good and 5 with injected known failures (wrong citation, paraphrased excerpt, vague clarifier, confident answer in Category C, missing escalation). The judge-validation stage scores these blind and reports per-dimension exact-match / within-1 / quadratic-κ, plus the injected-failure catch rate. A judge that fails to catch an injected failure is itself a failure the pipeline will surface.
+Full numbers: `eval_summary.md`. Per-row worst items with concrete code/rubric fixes: `failure_catalogue.md`. End-to-end build arc (v1 69% → v2 89% → v3 96%): `docs/journey.md`.
 
 ## v2 (if I had another day)
 
-- Active-learning loop: failure catalogue → prompt updates → next run.
-- Multi-turn generation (follow-up after B clarifier is answered).
-- Domain-adapted clause embeddings as a retrieval benchmark alongside PageIndex.
-- Hand-labelled set grown to 40 items with adversarial perturbations.
-- Upgrade the retrieval wrapper to a real PageIndex install once it's available on Windows (currently using the fallback clause-map-derived tree; acceptable for this document size but undersells what the library does on longer docs).
+- Guard Generator B against "concurrent obligations presented as alternatives" (the class that leaked through round-3).
+- Tighten `ambiguity_framing.recommends_escalation` to require a named mechanism, not just a recipient.
+- Active-learning loop: failure catalogue → prompt updates → next run, automated.
+- Real PageIndex install once it's available on Windows (currently using a clause-map-derived fallback tree).
 
 ## Repo layout
 

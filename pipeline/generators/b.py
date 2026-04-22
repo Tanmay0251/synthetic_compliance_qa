@@ -8,7 +8,7 @@ from pipeline.generators.common import Candidate, build_meta, dump_raw, extract_
 from pipeline.llm import LLMClient, Msg
 from pipeline.retrieval import ClauseHit, Retriever
 
-PROMPT_VERSION = "gen-b-v2"
+PROMPT_VERSION = "gen-b-v3"
 TEMPLATE_NAME = "gen_b_v1.md"
 
 

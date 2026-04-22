@@ -1,40 +1,20 @@
 {
   "totals": {
-    "total_cost_usd": 4.314495,
-    "total_input_tokens": 227169,
-    "total_output_tokens": 60356,
-    "total_wall_seconds": 1360.707,
-    "llm_calls": 139
+    "total_cost_usd": 1.462011,
+    "total_input_tokens": 82205,
+    "total_output_tokens": 24676,
+    "total_wall_seconds": 500.049,
+    "llm_calls": 42
   },
   "stages": [
     {
-      "stage": "topup_gen.A",
-      "model": "claude-sonnet-4-6",
-      "input_tokens": 2828,
-      "output_tokens": 1209,
-      "cost_usd": 0.026618999999999997,
-      "latency_ms": 30657,
-      "count": 3,
-      "extra": {}
-    },
-    {
-      "stage": "topup_validate.A",
-      "model": "claude-sonnet-4-6",
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "cost_usd": 0.0,
-      "latency_ms": 0,
-      "count": 1,
-      "extra": {}
-    },
-    {
       "stage": "topup_gen.B",
       "model": "claude-sonnet-4-6",
-      "input_tokens": 46789,
-      "output_tokens": 36664,
-      "cost_usd": 0.690327,
-      "latency_ms": 599923,
-      "count": 32,
+      "input_tokens": 29552,
+      "output_tokens": 21119,
+      "cost_usd": 0.405441,
+      "latency_ms": 372961,
+      "count": 16,
       "extra": {}
     },
     {
@@ -43,38 +23,18 @@
       "input_tokens": 0,
       "output_tokens": 0,
       "cost_usd": 0.0,
-      "latency_ms": 118834,
-      "count": 1,
-      "extra": {}
-    },
-    {
-      "stage": "topup_gen.C",
-      "model": "claude-sonnet-4-6",
-      "input_tokens": 12833,
-      "output_tokens": 9966,
-      "cost_usd": 0.187989,
-      "latency_ms": 200156,
-      "count": 12,
-      "extra": {}
-    },
-    {
-      "stage": "topup_validate.C",
-      "model": "claude-sonnet-4-6",
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "cost_usd": 0.0,
-      "latency_ms": 13709,
+      "latency_ms": 26091,
       "count": 1,
       "extra": {}
     },
     {
       "stage": "topup_judge",
       "model": "claude-opus-4-7",
-      "input_tokens": 164719,
-      "output_tokens": 12517,
-      "cost_usd": 3.4095600000000004,
-      "latency_ms": 395825,
-      "count": 89,
+      "input_tokens": 52653,
+      "output_tokens": 3557,
+      "cost_usd": 1.05657,
+      "latency_ms": 99446,
+      "count": 25,
       "extra": {}
     }
   ]

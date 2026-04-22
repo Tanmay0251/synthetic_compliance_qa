@@ -35,19 +35,18 @@
 **Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §2.9', 'Part B Part I §1(h)']
 **Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
-### B-002 (composite 4.64)
-**Q:** We have an outstanding balance owed to Razorpay under a separate lending product agreement with one of their Group Entities. Can Razorpay set off that amount against our payment settlements under the current PA services agreement?
-**Clarifier:** Is the liability in question arising under the current PA Services agreement (e.g., chargebacks or fees under these Terms), or does it arise under a separate agreement with Razorpay PA or a Group Entity? If it's under the current Services agreement, Part B §1(f) directly governs the set-off from Transaction Amounts or held funds; if it's under a separate agreement with Razorpay PA or a Group Entity, the broader set-off right in Part A §14.2 would be the operative clause, and the exposure is wider. (axis: `liability_source_agreement`)
-**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `citation_accuracy.excerpt_is_verbatim`=4
-**Flags:** paraphrase_not_verbatim
-**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §14.2', 'Part B Part I §1(f)']
-**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
-
-### B-003 (composite 4.73)
+### B-002 (composite 4.73)
 **Q:** We just got flagged by Razorpay and they're threatening to suspend our payment services over a KYC issue. What's the worst-case outcome here and can we recover from it?
 **Clarifier:** Is the KYC issue about information you already submitted being found inaccurate or incomplete, or is it about Razorpay requesting additional KYC documents that you haven't submitted yet? If it's the former (inaccurate existing info), Razorpay can immediately suspend and also terminate your account entirely; if it's the latter (non-submission of newly requested docs), suspension and settlement stoppage apply but the relationship can be restored once you submit the documents to their satisfaction. (axis: `kyc_issue_type`)
 **Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `grounding.factual_support`=5
 **Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §2.2', 'Part A §2.8']
+**Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
+
+### B-003 (composite 4.73)
+**Q:** We just got a notice that our Razorpay fees are going up. Do we have any option to push back or avoid the increase, or are we just obligated to pay it?
+**Clarifier:** What is the trigger for the fee increase — is it a statutory tax change (e.g., a GST rate revision), or is it Razorpay's own pricing decision on a service or value-added feature you're using? If it's a statutory tax change, you have no opt-out and must bear it automatically; if it's a Razorpay pricing decision on a service, your continued use constitutes consent but you could avoid the fee by not using that service. (axis: `fee_increase_trigger`)
+**Lowest dims:** `clarity.concision`=3, `clarity.readability`=4, `grounding.factual_support`=5
+**Root-cause trace:** validator=True; regen_count=0; seed_clauses=['Part A §3.2', 'Part A §14.3']
 **Mitigation proposal:** long answers with redundant framing. Prompt fix: `prompts/gen_*_v1.md` — add a `< 150 words` cap on answers and `< 80 words` on clarifiers. Post-processing fix: validator could add a `word_count` structural check.
 
 ## Category C

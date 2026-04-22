@@ -11,28 +11,40 @@ Before writing anything user-facing, in your own reasoning:
 - The axis must be something a real user WOULD NOT have stated up front. Things like "are you asking about X or Y?" where the answer genuinely differs.
 - NOT a valid axis: "which clause do you want me to look at" (user doesn't care), "what is your business type" (if both clauses apply regardless), "have you already done X" (if both clauses apply independently of timing).
 
-## Step 2 — Write the two branch conclusions
+## Step 2 — Draft the question WITHOUT revealing the axis value
+
+Now draft the merchant-voice question. The question MUST leave the axis genuinely open:
+- Do NOT mention the distinguishing fact that pins the axis to a specific value. If your axis is `recovery_trigger_type` (penalty vs. chargeback), the question must NOT say "we got hit with a card-network penalty" — that collapses the axis.
+- Do NOT include the distinguishing entity ("my Group Entity lending contract", "a separate service agreement", "a card-association fine") if the axis is about that very distinction.
+- A good B question sounds genuinely ambiguous — a reader should be able to imagine answering it under either axis value before seeing the clarifier.
+
+Self-check: read your draft question. Ask: "Does this sentence already tell me which clause applies?" If yes, rewrite it more generally (e.g., "Razorpay is recovering something from our settlement" instead of "Razorpay is recovering a card-network fine from our settlement").
+
+## Step 3 — Write the two branch conclusions
 
 Privately draft:
 - Conclusion if `axis = value_1`: one sentence. What must the user actually do / expect?
 - Conclusion if `axis = value_2`: one sentence. What must the user actually do / expect?
 
-## Step 3 — Divergence check (this is the kill switch)
+Each branch must cite a DIFFERENT clause (or the same clause used in a materially different way). If both branches would cite the same excerpt, the axis is actually a factual pre-condition already contained in one clause — reject.
+
+## Step 4 — Divergence check (this is the kill switch)
 
 Compare the two conclusions. Do they lead to **materially different operational outcomes**?
 - Different dollar amounts, different deadlines, different required paperwork, different yes/no decision, different responsible party — these are divergent.
 - Both say "you still owe fees" / "you must still comply" / "the same obligation applies just via a different route" — NOT divergent. Both clauses apply concurrently; the answer is the same either way.
+- Both cite the SAME clause text — NOT divergent. It's one answer dressed as two.
 
-**If the two conclusions converge operationally, STOP.** Emit this JSON and nothing else:
+**If the two conclusions converge, or if both branches cite the same excerpt, or if the question already answered the axis, STOP.** Emit this JSON and nothing else:
 ```json
-{"reject": true, "reason": "<one-sentence explanation of why the axis is not load-bearing>"}
+{"reject": true, "reason": "<one-sentence explanation: converges, or question pre-reveals axis, or same excerpt>"}
 ```
 
 Do not try to force a different axis; do not produce a partial answer. Just reject.
 
-## Step 4 — Emit the full Q&A
+## Step 5 — Emit the full Q&A
 
-Only if Step 3 passed: produce a single JSON object (no prose, no markdown fences):
+Only if Step 4 passed: produce a single JSON object (no prose, no markdown fences):
 
 ```json
 {
