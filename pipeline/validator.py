@@ -48,24 +48,47 @@ class Validator:
         r.passed = all(v == "ok" for v in r.checks.values())
         return r
 
+    # Unicode quote variants that LLMs commonly normalise — treat them as equivalent when
+    # checking that an excerpt is a substring of the clause text.
+    _QUOTE_NORMALISE = str.maketrans({
+        "“": '"', "”": '"', "‘": "'", "’": "'",
+    })
+
+    @classmethod
+    def _excerpt_in_clause(cls, excerpt: str, clause_text: str) -> bool:
+        if excerpt in clause_text:
+            return True
+        return excerpt.translate(cls._QUOTE_NORMALISE) in clause_text.translate(cls._QUOTE_NORMALISE)
+
     def _check_citations(self, row: dict[str, Any], r: ValidationResult) -> None:
         cites = row.get("clause_citations") or []
         if not cites and row.get("category") == "A":
             r.checks["citation_resolves"] = "fail"
             r.reasons.append("citation_resolves: Category A requires at least 1 citation")
             return
-        for i, c in enumerate(cites):
+
+        def _check_one(label: str, c: dict[str, Any]) -> bool:
             cid = c.get("clause_id")
             clause = self._clauses.get(cid)
             if not clause:
                 r.checks["citation_resolves"] = "fail"
-                r.reasons.append(f"citation_resolves: unknown clause_id '{cid}'")
-                return
+                r.reasons.append(f"citation_resolves: unknown clause_id '{cid}' ({label})")
+                return False
             excerpt = c.get("verbatim_excerpt", "")
-            if excerpt not in clause["verbatim_text"]:
+            if not self._excerpt_in_clause(excerpt, clause["verbatim_text"]):
                 r.checks["citation_resolves"] = "fail"
-                r.reasons.append(f"citation[{i}]: verbatim_excerpt not a substring of {cid}")
+                r.reasons.append(f"{label}: verbatim_excerpt not a substring of {cid}")
+                return False
+            return True
+
+        for i, c in enumerate(cites):
+            if not _check_one(f"citation[{i}]", c):
                 return
+        # Also check per-branch citations — gap in v1 validator.
+        for bi, br in enumerate(row.get("answer_branches") or []):
+            for ci, c in enumerate(br.get("clause_citations", [])):
+                if not _check_one(f"branches[{bi}].clause_citations[{ci}]", c):
+                    return
         r.checks["citation_resolves"] = "ok"
 
     def _check_grounding(self, row: dict[str, Any], r: ValidationResult) -> None:
